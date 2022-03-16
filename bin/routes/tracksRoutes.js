@@ -11,7 +11,7 @@ class TracksRoutes {
         this.routes(); //This has to be written here so that the method can actually be configured when called externally.
     }
     async getTracks(req, res) {
-        const allTracks = await Track_1.default.find();
+        const allTracks = await Track_1.default.find().populate('user');
         if (allTracks.length == 0) {
             res.status(404).send("There are no tracks yet!");
         }
@@ -20,7 +20,7 @@ class TracksRoutes {
         }
     }
     async getTrackByName(req, res) {
-        const trackFound = await Track_1.default.findOne({ name: req.params.nameTrack });
+        const trackFound = await Track_1.default.findOne({ name: req.params.nameTrack }).populate('user');
         if (trackFound == null) {
             res.status(404).send("The track doesn't exist!");
         }
@@ -30,9 +30,9 @@ class TracksRoutes {
     }
     async addTrack(req, res) {
         console.log(req.body);
-        const { id, title, singer, year, duration } = req.body;
-        const newTrack = new Track_1.default({ id, title, singer, year, duration });
-        await newTrack.save();
+        const { id, title, singer, year, duration, user } = req.body;
+        const newTrack = new Track_1.default({ id, title, singer, year, duration, user });
+        const savedTrack = newTrack.save();
         res.status(200).send('Track added!');
     }
     async updateTrack(req, res) {
